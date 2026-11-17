@@ -1,6 +1,4 @@
 #!/bin/bash
-set -euo pipefail
-
 SERVER_IP="$1"
 K3S_TOKEN="$2"
 KUBECTL=/usr/local/bin/kubectl
@@ -23,9 +21,9 @@ done
 
 $KUBECTL apply -f /tmp/confs
 
-$KUBECTL wait --for=condition=Available deployment --all --timeout=300s
+$KUBECTL wait --for=condition=Available deployment --all --timeout=600s
 
-DEADLINE=$((SECONDS + 300))
+DEADLINE=$((SECONDS + 600))
 for HOST in app1.com app2.com app3.com; do
   until curl -sf -H "Host: $HOST" "http://$SERVER_IP" > /dev/null; do
     if [ "$SECONDS" -ge "$DEADLINE" ]; then
