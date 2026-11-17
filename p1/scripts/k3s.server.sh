@@ -2,7 +2,7 @@
 
 SERVER_IP="$1"
 K3S_TOKEN="$2"
-IFACE=$(ip -o -4 addr show | awk -v ip="$SERVER_IP" '$4 ~ "^"ip"/" {print $2}')
+IFACE=$(ip -o -4 addr show | grep -F "$SERVER_IP/" | awk '{print $2}')
 
 systemctl disable firewalld --now
 
