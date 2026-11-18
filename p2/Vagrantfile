@@ -1,6 +1,7 @@
 LOGIN = "sforesti"
 SERVER_IP = "192.168.56.110"
 K3S_TOKEN = "b74487613b60ae65549de6369ff80dde178c65838527233ec0b2df52194b7eb8"
+DOCKERHUB = { "DOCKERHUB_USER" => ENV.fetch("DOCKERHUB_USER", ""), "DOCKERHUB_TOKEN" => ENV.fetch("DOCKERHUB_TOKEN", "") }
 
 Vagrant.configure("2") do |config|
   config.vm.box              = "rockylinux-10"
@@ -13,6 +14,7 @@ Vagrant.configure("2") do |config|
     server.vm.hostname = "#{LOGIN}S"
     server.vm.network "private_network", ip: SERVER_IP
     server.vm.provision "file", source: "confs", destination: "/tmp/confs"
+    server.vm.provision "shell", path: "scripts/dockerhub_auth.sh", env: DOCKERHUB
     server.vm.provision "shell", path: "scripts/k3s.server.sh", args: [SERVER_IP, K3S_TOKEN]
 
     server.vm.provider "virtualbox" do |vb|
