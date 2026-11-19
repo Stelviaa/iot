@@ -33,6 +33,8 @@ Vagrant.configure("2") do |config|
       vb.name = "#{LOGIN}S"
       vb.cpus   = 2
       vb.memory = 4096
+      # nested VMs: vCPU clocks drift apart; kvm-clock keeps guest time stable
+      vb.customize ["modifyvm", :id, "--paravirt-provider", "kvm"]
     end
   end
 end
