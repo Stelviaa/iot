@@ -1,13 +1,9 @@
 #!/bin/bash
 CLUSTER=iot
 
-# Optional Docker Hub login: anonymous pulls are limited per public IP (shared by the whole school).
-# export DOCKERHUB_USER=<login> DOCKERHUB_TOKEN=<personal access token> before running this script
 REGISTRY_ARGS=()
 if [ -n "$DOCKERHUB_USER" ] && [ -n "$DOCKERHUB_TOKEN" ]; then
-  # host docker pulls the k3s node image
   echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USER" --password-stdin || exit 1
-  # containerd inside the cluster pulls the app and system images
   cat > /tmp/iot-registries.yaml <<EOF
 mirrors:
   docker.io:

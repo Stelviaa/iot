@@ -8,16 +8,14 @@ Vagrant.configure("2") do |config|
   config.vm.box              = "rockylinux-10"
   config.vm.box_url          = "https://dl.rockylinux.org/pub/rocky/10/images/x86_64/Rocky-10-Vagrant-Vbox.latest.x86_64.vagrant.virtualbox.box"
   config.vm.box_check_update = false
-  config.vm.boot_timeout     = 900   # nested VM (VM inside the 42 VM): first boot can exceed the default 300s
+  config.vm.boot_timeout     = 900
 
   config.vm.synced_folder ".", "/vagrant", disabled: true
 
-  # Nested VM fix: Vagrant gives the private network (192.168.56.x) a default route, so depending on
-  # boot order the VM sends its internet traffic to 192.168.56.1 (dead end). Runs first, on every up/reload.
   config.vm.provision "shell", run: "always", inline: <<-'SHELL'
     IFACE=$(ip -o -4 addr show | grep -F "192.168.56." | awk '{print $2}')
     CON=$(nmcli -g GENERAL.CONNECTION device show "$IFACE")
-    restorecon -R /etc/NetworkManager/system-connections   # Vagrant copies this file from /tmp: wrong SELinux label
+    restorecon -R /etc/NetworkManager/system-connections
     nmcli connection modify "$CON" ipv4.never-default yes
     nmcli connection up "$CON" > /dev/null
     ip route | grep default
@@ -26,7 +24,6 @@ Vagrant.configure("2") do |config|
   config.vm.provider "virtualbox" do |vb|
     vb.cpus   = 2
     vb.memory = 2048
-    # nested VMs: vCPU clocks drift apart; kvm-clock keeps guest time stable (the server froze without it)
     vb.customize ["modifyvm", :id, "--paravirt-provider", "kvm"]
   end
 

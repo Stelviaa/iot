@@ -1,6 +1,6 @@
 #!/bin/bash
-# Optional Docker Hub login for K3s: anonymous pulls are limited per public IP (shared by the whole school).
-# On the host: export DOCKERHUB_USER=<login> DOCKERHUB_TOKEN=<personal access token>, then vagrant up
+# if docker limit reached:
+# export DOCKERHUB_USER=olmayt DOCKERHUB_TOKEN=<token> before up
 if [ -z "$DOCKERHUB_USER" ] || [ -z "$DOCKERHUB_TOKEN" ]; then
   echo "[dockerhub] no credentials: anonymous pulls"
   exit 0
